@@ -1,0 +1,21 @@
+@import "tailwindcss";
+
+/* Define Global Colors using CSS Variables */
+:root {
+  --primary-color: #F44250;
+  --secondary-color: #F4A261; 
+}
+
+
+/* You can use these variables in Tailwind classes as well */
+.bg-primary {
+  background-color: var(--primary-color);
+}
+
+.bg-secondary {
+  background-color: var(--secondary-color);
+}
+
+.text-primary {
+  color: var(--primary-color);
+}
