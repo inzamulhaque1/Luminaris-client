@@ -1,16 +1,14 @@
-import React from 'react';
 import { useForm } from 'react-hook-form';
 
 const Signup = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = (data) => {
-    alert('Signup Successful');
     console.log(data); // You can handle the data further here
   };
 
   return (
-    <div className="max-w-md mx-auto p-6 bg-white rounded-lg shadow-md">
+    <div className="max-w-md mx-auto p-6 m-10 bg-white rounded-lg shadow-md">
       <h2 className="text-2xl font-semibold text-center mb-4">Sign Up</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="mb-4">
@@ -38,7 +36,7 @@ const Signup = () => {
             type="password"
             placeholder="Password"
             {...register('password', { required: 'Password is required' })}
-            className="w-full p-2 border border-gray-300 rounded"
+            className="w-full p-2 border border-gray-300 rounded" 
           />
           {errors.password && <p className="text-red-500 text-xs">{errors.password.message}</p>}
         </div>
