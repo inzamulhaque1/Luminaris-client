@@ -12,6 +12,9 @@
   "dependencies": {
     "@tailwindcss/postcss": "^4.0.9",
     "@tailwindcss/vite": "^4.0.9",
+    "axios": "^1.8.1",
+    "cloudinary": "^2.5.1",
+    "google-auth-library": "^9.15.1",
     "postcss": "^8.5.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
