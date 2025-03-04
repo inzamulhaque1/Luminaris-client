@@ -1,7 +1,10 @@
+
 import { NavLink } from "react-router-dom";
 
 
+
 const Navbar = () => {
+
 
   const links = (
     <>
@@ -53,6 +56,7 @@ const Navbar = () => {
       <div className="w-10/12 flex justify-between items-center p-4 mx-auto">
         <div className="text-white font-bold text-xl">Luminaris</div>
         <div className="flex space-x-6">{links}</div>
+        
         <div className="flex space-x-2">
           <NavLink
             to="/login"
