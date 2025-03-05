@@ -1,11 +1,11 @@
 import { useForm } from "react-hook-form";
+import { useAuth } from "../../hooks/useAuth";
+import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { login } = useAuth();
+  const navigate = useNavigate();
 
   const onSubmit = async (data) => {
     const formData = new FormData();
@@ -13,7 +13,7 @@ const Signup = () => {
     formData.append("email", data.email);
     formData.append("password", data.password);
     formData.append("role", data.role);
-    if (data.image[0]) {
+    if (data.image && data.image[0]) {
       formData.append("image", data.image[0]);
     }
 
@@ -25,12 +25,15 @@ const Signup = () => {
       const result = await response.json();
       if (response.ok) {
         console.log("Signup successful:", result);
-        // Handle success (e.g., redirect to login)
+        login(result.token, result.user); // Set user state after signup
+        navigate("/"); // Redirect to home
       } else {
         console.error("Signup failed:", result.message);
+        alert(`Signup failed: ${result.message}`);
       }
     } catch (error) {
       console.error("Signup error:", error);
+      alert("An error occurred during signup");
     }
   };
 

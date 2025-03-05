@@ -3,7 +3,8 @@ import { useAuth } from "../hooks/useAuth";
 
 
 const Navbar = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, loading } = useAuth();
+  console.log("User in Navbar:", user);
 
   const links = (
     <>
@@ -49,7 +50,10 @@ const Navbar = () => {
       </NavLink>
     </>
   );
-
+  
+  if (loading) {
+    return <div className="bg-primary text-white p-4">Loading...</div>; // Optional loading state
+  }
   return (
     <div className="bg-primary">
       <div className="w-10/12 flex justify-between items-center p-4 mx-auto">

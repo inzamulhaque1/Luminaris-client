@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import { jwtDecode } from "jwt-decode"; // Use named import
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
@@ -15,16 +15,42 @@ export const AuthProvider = ({ children }) => {
         const decoded = jwtDecode(storedToken);
         if (decoded.exp * 1000 > Date.now()) { // Check if token is not expired
           setToken(storedToken);
-          setUser(decoded);
+          // Fetch full user data from backend
+          fetchUserData(storedToken);
         } else {
           localStorage.removeItem("token");
+          setLoading(false);
         }
       } catch (err) {
-        localStorage.removeItem(err,"token");
+        localStorage.removeItem("token");
+        console.log(err);
+        setLoading(false);
       }
+    } else {
+      setLoading(false);
     }
-    setLoading(false);
   }, []);
+
+  const fetchUserData = async (authToken) => {
+    try {
+      const response = await fetch("http://localhost:5000/api/user", {
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      });
+      const userData = await response.json();
+      if (response.ok) {
+        setUser(userData); // Set full user data
+      } else {
+        throw new Error("Failed to fetch user data");
+      }
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      logout(); // Logout if fetch fails
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const login = (token, userData) => {
     setToken(token);
