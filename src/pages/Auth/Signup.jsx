@@ -3,18 +3,44 @@ import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 
 const Signup = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    formState: { errors },
+  } = useForm();
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  // Watch the role field to conditionally render additional fields
+  const selectedRole = watch("role");
 
   const onSubmit = async (data) => {
     const formData = new FormData();
     formData.append("name", data.name);
-    formData.append("email", data.email);
+    formData.append("email", data.email.toLowerCase());
     formData.append("password", data.password);
     formData.append("role", data.role);
     if (data.image && data.image[0]) {
       formData.append("image", data.image[0]);
+    }
+
+    // Append additional fields based on role
+    if (data.role === "student") {
+      formData.append("rollNumber", data.rollNumber);
+      formData.append("class", data.class);
+      formData.append("dateOfBirth", data.dateOfBirth);
+      formData.append("address", data.address);
+      formData.append("phoneNumber", data.phoneNumber);
+    } else if (data.role === "teacher") {
+      formData.append("subject", data.subject);
+      formData.append("educationQualification", data.educationQualification);
+      formData.append("address", data.address);
+      formData.append("phoneNumber", data.phoneNumber);
+    } else if (data.role === "parent") {
+      formData.append("studentRollNumber", data.studentRollNumber);
+      formData.append("studentClass", data.studentClass);
+      formData.append("phoneNumber", data.phoneNumber);
     }
 
     try {
@@ -43,7 +69,7 @@ const Signup = () => {
         Create Your Account
       </h2>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-      <div>
+        <div>
           <input
             type="file"
             {...register("image")}
@@ -95,7 +121,9 @@ const Signup = () => {
             className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
           />
           {errors.password && (
-            <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>
+            <p className="text-red-500 text-sm mt-1">
+              {errors.password.message}
+            </p>
           )}
         </div>
 
@@ -114,7 +142,215 @@ const Signup = () => {
           )}
         </div>
 
-        
+        {/* Conditional Fields for Student */}
+        {selectedRole === "student" && (
+          <>
+            <div>
+              <input
+                type="text"
+                {...register("rollNumber", {
+                  required: "Roll Number is required",
+                })}
+                placeholder="Roll Number"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
+              {errors.rollNumber && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.rollNumber.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <select
+                {...register("class", { required: "Class is required" })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              >
+                <option value="">Select Class</option>
+                {[...Array(10)].map((_, index) => (
+                  <option key={index + 1} value={index + 1}>
+                    Class {index + 1}
+                  </option>
+                ))}
+                <option value="ssc">SSC</option>
+                <option value="hsc">HSC</option>
+              </select>
+              {errors.class && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.class.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="date"
+                {...register("dateOfBirth", {
+                  required: "Date of Birth is required",
+                })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
+              {errors.dateOfBirth && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.dateOfBirth.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <input
+                type="text"
+                {...register("address", { required: "Address is required" })}
+                placeholder="Address"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
+              {errors.address && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.address.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <input
+                type="text"
+                {...register("phoneNumber", {
+                  required: "Phone Number is required",
+                })}
+                placeholder="Phone Number"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
+              {errors.phoneNumber && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.phoneNumber.message}
+                </p>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Conditional Fields for Teacher */}
+        {selectedRole === "teacher" && (
+          <>
+            <div>
+              <input
+                type="text"
+                {...register("subject", { required: "Subject is required" })}
+                placeholder="Subject"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
+              {errors.subject && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.subject.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <select
+                {...register("educationQualification", {
+                  required: "Education Qualification is required",
+                })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              >
+                <option value="">Select Qualification</option>
+                <option value="BCS">BCS</option>
+                <option value="BSC">BSC</option>
+                <option value="MSC">MSC</option>
+                <option value="BBA">BBA</option>
+                <option value="MBA">MBA</option>
+              </select>
+              {errors.educationQualification && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.educationQualification.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <input
+                type="text"
+                {...register("address", { required: "Address is required" })}
+                placeholder="Address"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
+              {errors.address && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.address.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <input
+                type="text"
+                {...register("phoneNumber", {
+                  required: "Phone Number is required",
+                })}
+                placeholder="Phone Number"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
+              {errors.phoneNumber && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.phoneNumber.message}
+                </p>
+              )}
+            </div>
+          </>
+        )}
+
+        {/* Conditional Fields for Parent */}
+        {selectedRole === "parent" && (
+          <>
+            <div>
+              <input
+                type="text"
+                {...register("studentRollNumber", {
+                  required: "Student Roll Number is required",
+                })}
+                placeholder="Student Roll Number"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
+              {errors.studentRollNumber && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.studentRollNumber.message}
+                </p>
+              )}
+            </div>
+            <div>
+              <select
+                {...register("studentClass", {
+                  required: "Student Class is required",
+                })}
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              >
+                <option value="">Select Class</option>
+                {[...Array(10)].map((_, index) => (
+                  <option key={index + 1} value={index + 1}>
+                    Class {index + 1}
+                  </option>
+                ))}
+                <option value="ssc">SSC</option>
+                <option value="hsc">HSC</option>
+              </select>
+              {errors.studentClass && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.studentClass.message}
+                </p>
+              )}
+            </div>
+
+            <div>
+              <input
+                type="text"
+                {...register("phoneNumber", {
+                  required: "Phone Number is required",
+                })}
+                placeholder="Phone Number"
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+              />
+              {errors.phoneNumber && (
+                <p className="text-red-500 text-sm mt-1">
+                  {errors.phoneNumber.message}
+                </p>
+              )}
+            </div>
+          </>
+        )}
 
         <button
           type="submit"
