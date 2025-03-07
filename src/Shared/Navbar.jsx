@@ -48,6 +48,16 @@ const Navbar = () => {
       >
         Contact
       </NavLink>
+      <NavLink
+        to="/dashboard"
+        className={({ isActive }) =>
+          isActive
+            ? "text-white underline underline-offset-8"
+            : "text-white hover:text-gray-300 transition-colors"
+        }
+      >
+        Dashboard
+      </NavLink>
     </>
   );
   
