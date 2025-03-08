@@ -24,7 +24,7 @@ const Dashboard = () => {
         <Topbar></Topbar>
 
         {/* Dynamic Content */}
-        <div className="p-6 flex-1">
+        <div className=" flex-1">
           <Outlet />
         </div>
       </div>

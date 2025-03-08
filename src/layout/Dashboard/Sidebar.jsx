@@ -21,7 +21,7 @@ const Sidebar = () => {
         end: true, // Exact match for "/dashboard"
       },
       {
-        to: "/profile", // Profile route
+        to: "profile", // Profile route
         icon: "📅",
         label: "Profile",
         end: true, // Exact match for "/profile"
