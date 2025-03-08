@@ -1,366 +1,223 @@
-import { useForm } from "react-hook-form";
-import { useAuth } from "../../hooks/useAuth";
-import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
 
-const Signup = () => {
-  const {
-    register,
-    handleSubmit,
-    watch,
-    formState: { errors },
-  } = useForm();
-  const { login } = useAuth();
-  const navigate = useNavigate();
+import { FaArrowUp, FaArrowDown, FaUser, FaEnvelope, FaIdBadge, FaImage, FaCrown, FaEdit, FaTrash } from "react-icons/fa";
+import { Spinner } from "react-bootstrap";
+import Swal from "sweetalert2"; // For confirmation dialogs
+import useAxiosSecure from "../../hooks/useAxiosSecure";
 
-  // Watch the role field to conditionally render additional fields
-  const selectedRole = watch("role");
+const AllUsers = () => {
+  const axiosSecure = useAxiosSecure();
+  const [users, setUsers] = useState([]);
+  const [sortedUsers, setSortedUsers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [newRole, setNewRole] = useState("");
 
-  const onSubmit = async (data) => {
-    const formData = new FormData();
-    formData.append("name", data.name);
-    formData.append("email", data.email.toLowerCase());
-    formData.append("password", data.password);
-    formData.append("role", data.role);
-    if (data.image && data.image[0]) {
-      formData.append("image", data.image[0]);
-    }
-
-    // Append additional fields based on role
-    if (data.role === "student") {
-      formData.append("rollNumber", data.rollNumber);
-      formData.append("class", data.class);
-      formData.append("dateOfBirth", data.dateOfBirth);
-      formData.append("address", data.address);
-      formData.append("phoneNumber", data.phoneNumber);
-    } else if (data.role === "teacher") {
-      formData.append("subject", data.subject);
-      formData.append("educationQualification", data.educationQualification);
-      formData.append("address", data.address);
-      formData.append("phoneNumber", data.phoneNumber);
-    } else if (data.role === "parent") {
-      formData.append("studentRollNumber", data.studentRollNumber);
-      formData.append("studentClass", data.studentClass);
-      formData.append("phoneNumber", data.phoneNumber);
-    }
-
-    try {
-      const response = await fetch("http://localhost:5000/api/signup", {
-        method: "POST",
-        body: formData,
-      });
-      const result = await response.json();
-      if (response.ok) {
-        console.log("Signup successful:", result);
-        login(result.token, result.user); // Set user state after signup
-        navigate("/"); // Redirect to home
-      } else {
-        console.error("Signup failed:", result.message);
-        alert(`Signup failed: ${result.message}`);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const response = await axiosSecure.get("/users");
+        setUsers(response.data);
+        setSortedUsers(response.data);
+        setLoading(false);
+      } catch (err) {
+        setError(err.response?.data?.message || "Error fetching users");
+        setLoading(false);
       }
-    } catch (error) {
-      console.error("Signup error:", error);
-      alert("An error occurred during signup");
+    };
+    fetchUsers();
+  }, [axiosSecure]);
+
+  const handleSort = (key) => {
+    let direction = "asc";
+    if (sortConfig.key === key && sortConfig.direction === "asc") {
+      direction = "desc";
+    }
+    setSortConfig({ key, direction });
+
+    const sortedArray = [...users].sort((a, b) => {
+      const aValue = a[key] || "";
+      const bValue = b[key] || "";
+      if (typeof aValue === "string") {
+        return direction === "asc" ? aValue.localeCompare(bValue) : bValue.localeCompare(aValue);
+      }
+      return direction === "asc" ? aValue - bValue : bValue - aValue;
+    });
+    setSortedUsers(sortedArray);
+  };
+
+  const renderSortIcon = (key) => {
+    if (sortConfig.key !== key) return null;
+    return sortConfig.direction === "asc" ? (
+      <FaArrowUp className="inline ml-1 text-white" />
+    ) : (
+      <FaArrowDown className="inline ml-1 text-white" />);
+  };
+
+  // Update user role
+  const handleUpdateRole = async (userId) => {
+    if (!newRole) {
+      Swal.fire("Error", "Please select a role", "error");
+      return;
+    }
+    try {
+      const response = await axiosSecure.put(`/users/${userId}`, { role: newRole });
+      if (response.status === 200) {
+        const updatedUsers = users.map((user) =>
+          user._id === userId ? { ...user, role: newRole } : user
+        );
+        setUsers(updatedUsers);
+        setSortedUsers(updatedUsers);
+        setSelectedUser(null);
+        setNewRole("");
+        Swal.fire("Success", "User role updated successfully", "success");
+      }
+    } catch (err) {
+      Swal.fire("Error", err.response?.data?.message || "Failed to update role", "error");
     }
   };
 
+  // Delete user
+  const handleDeleteUser = async (userId) => {
+    const result = await Swal.fire({
+      title: "Are you sure?",
+      text: "This action cannot be undone!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Yes, delete it!",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await axiosSecure.delete(`/users/${userId}`);
+        if (response.status === 200) {
+          const updatedUsers = users.filter((user) => user._id !== userId);
+          setUsers(updatedUsers);
+          setSortedUsers(updatedUsers);
+          Swal.fire("Deleted!", "User has been deleted.", "success");
+        }
+      } catch (err) {
+        Swal.fire("Error", err.response?.data?.message || "Failed to delete user", "error");
+      }
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <Spinner animation="border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
+  }
+
+  if (error) {
+    return <div className="text-red-500 text-center mt-10">Error: {error}</div>;
+  }
+
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-        Create Your Account
+    <div className="container mx-auto p-4">
+      <h2 className="text-3xl font-bold mb-6 text-center text-gray-800 flex items-center justify-center">
+        <FaCrown className="mr-2 text-yellow-500" /> All Users
       </h2>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-        <div>
-          <input
-            type="file"
-            {...register("image")}
-            accept="image/*"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-          />
-        </div>
-        <div>
-          <input
-            type="text"
-            {...register("name", { required: "Name is required" })}
-            placeholder="Full Name"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-          />
-          {errors.name && (
-            <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-          )}
-        </div>
+      <div className="overflow-x-auto shadow-lg rounded-lg">
+        <table className="min-w-full bg-white rounded-lg overflow-hidden">
+          <thead className="bg-gradient-to-r from-blue-500 to-blue-600 text-white">
+            <tr>
+              <th className="py-3 px-4 border-b cursor-pointer hover:bg-blue-700 transition duration-300" onClick={() => handleSort("_id")}>
+                <div className="flex items-center"><FaIdBadge className="mr-2" /> ID {renderSortIcon("_id")}</div>
+              </th>
+              <th className="py-3 px-4 border-b cursor-pointer hover:bg-blue-700 transition duration-300" onClick={() => handleSort("name")}>
+                <div className="flex items-center"><FaUser className="mr-2" /> Name {renderSortIcon("name")}</div>
+              </th>
+              <th className="py-3 px-4 border-b cursor-pointer hover:bg-blue-700 transition duration-300" onClick={() => handleSort("email")}>
+                <div className="flex items-center"><FaEnvelope className="mr-2" /> Email {renderSortIcon("email")}</div>
+              </th>
+              <th className="py-3 px-4 border-b cursor-pointer hover:bg-blue-700 transition duration-300" onClick={() => handleSort("role")}>
+                <div className="flex items-center"><FaCrown className="mr-2" /> Role {renderSortIcon("role")}</div>
+              </th>
+              <th className="py-3 px-4 border-b cursor-pointer hover:bg-blue-700 transition duration-300" onClick={() => handleSort("image")}>
+                <div className="flex items-center"><FaImage className="mr-2" /> Image {renderSortIcon("image")}</div>
+              </th>
+              <th className="py-3 px-4 border-b">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            {sortedUsers.map((user, idx) => (
+              <tr key={user._id} className="hover:bg-gray-50 transition duration-200">
+                <td className="py-3 px-4 border-b text-left">{idx + 1}</td>
+                <td className="py-3 px-4 border-b text-left">{user.name}</td>
+                <td className="py-3 px-4 border-b text-left">{user.email}</td>
+                <td className="py-3 px-4 border-b text-left">{user.role}</td>
+                <td className="py-3 px-4 border-b text-left flex justify-start">
+                  {user.image ? (
+                    <img src={user.image} alt={user.name} className="w-10 h-10 rounded-full object-cover" />
+                  ) : (
+                    "No image"
+                  )}
+                </td>
+                <td className="py-3 px-4 border-b text-left">
+                  <button
+                    onClick={() => setSelectedUser(user)}
+                    className="text-blue-600 hover:text-blue-800 mr-4"
+                    title="Update Role"
+                  >
+                    <FaEdit size={20} />
+                  </button>
+                  <button
+                    onClick={() => handleDeleteUser(user._id)}
+                    className="text-red-600 hover:text-red-800"
+                    title="Delete User"
+                  >
+                    <FaTrash size={20} />
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
-        <div>
-          <input
-            type="email"
-            {...register("email", {
-              required: "Email is required",
-              pattern: {
-                value: /^\S+@\S+$/i,
-                message: "Invalid email format",
-              },
-            })}
-            placeholder="Email"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-          />
-          {errors.email && (
-            <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>
-          )}
-        </div>
-
-        <div>
-          <input
-            type="password"
-            {...register("password", {
-              required: "Password is required",
-              minLength: {
-                value: 6,
-                message: "Password must be at least 6 characters",
-              },
-            })}
-            placeholder="Password"
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-          />
-          {errors.password && (
-            <p className="text-red-500 text-sm mt-1">
-              {errors.password.message}
-            </p>
-          )}
-        </div>
-
-        <div>
-          <select
-            {...register("role", { required: "Role is required" })}
-            className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-          >
-            <option value="">Select Role</option>
-            <option value="parent">Parent</option>
-            <option value="teacher">Teacher</option>
-            <option value="student">Student</option>
-          </select>
-          {errors.role && (
-            <p className="text-red-500 text-sm mt-1">{errors.role.message}</p>
-          )}
-        </div>
-
-        {/* Conditional Fields for Student */}
-        {selectedRole === "student" && (
-          <>
-            <div>
-              <input
-                type="text"
-                {...register("rollNumber", {
-                  required: "Roll Number is required",
-                })}
-                placeholder="Roll Number"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-              />
-              {errors.rollNumber && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.rollNumber.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <select
-                {...register("class", { required: "Class is required" })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+      {/* Role Update Modal */}
+      {selectedUser && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex justify-center items-center">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <h3 className="text-xl font-semibold mb-4">Update Role for {selectedUser.name}</h3>
+            <select
+              value={newRole}
+              onChange={(e) => setNewRole(e.target.value)}
+              className="w-full p-2 border rounded mb-4"
+            >
+              <option value="">Select Role</option>
+              <option value="admin">Admin</option>
+              <option value="parent">Parent</option>
+              <option value="teacher">Teacher</option>
+              <option value="student">Student</option>
+            </select>
+            <div className="flex justify-end">
+              <button
+                onClick={() => setSelectedUser(null)}
+                className="bg-gray-300 text-gray-800 px-4 py-2 rounded mr-2 hover:bg-gray-400"
               >
-                <option value="">Select Class</option>
-                {[...Array(10)].map((_, index) => (
-                  <option key={index + 1} value={index + 1}>
-                    Class {index + 1}
-                  </option>
-                ))}
-                <option value="ssc">SSC</option>
-                <option value="hsc">HSC</option>
-              </select>
-              {errors.class && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.class.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <input
-                type="date"
-                {...register("dateOfBirth", {
-                  required: "Date of Birth is required",
-                })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-              />
-              {errors.dateOfBirth && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.dateOfBirth.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <input
-                type="text"
-                {...register("address", { required: "Address is required" })}
-                placeholder="Address"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-              />
-              {errors.address && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.address.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <input
-                type="text"
-                {...register("phoneNumber", {
-                  required: "Phone Number is required",
-                })}
-                placeholder="Phone Number"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-              />
-              {errors.phoneNumber && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.phoneNumber.message}
-                </p>
-              )}
-            </div>
-          </>
-        )}
-
-        {/* Conditional Fields for Teacher */}
-        {selectedRole === "teacher" && (
-          <>
-            <div>
-              <input
-                type="text"
-                {...register("subject", { required: "Subject is required" })}
-                placeholder="Subject"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-              />
-              {errors.subject && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.subject.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <select
-                {...register("educationQualification", {
-                  required: "Education Qualification is required",
-                })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                Cancel
+              </button>
+              <button
+                onClick={() => handleUpdateRole(selectedUser._id)}
+                className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
               >
-                <option value="">Select Qualification</option>
-                <option value="BCS">BCS</option>
-                <option value="BSC">BSC</option>
-                <option value="MSC">MSC</option>
-                <option value="BBA">BBA</option>
-                <option value="MBA">MBA</option>
-              </select>
-              {errors.educationQualification && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.educationQualification.message}
-                </p>
-              )}
+                Update
+              </button>
             </div>
-            <div>
-              <input
-                type="text"
-                {...register("address", { required: "Address is required" })}
-                placeholder="Address"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-              />
-              {errors.address && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.address.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <input
-                type="text"
-                {...register("phoneNumber", {
-                  required: "Phone Number is required",
-                })}
-                placeholder="Phone Number"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-              />
-              {errors.phoneNumber && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.phoneNumber.message}
-                </p>
-              )}
-            </div>
-          </>
-        )}
-
-        {/* Conditional Fields for Parent */}
-        {selectedRole === "parent" && (
-          <>
-            <div>
-              <input
-                type="text"
-                {...register("studentRollNumber", {
-                  required: "Student Roll Number is required",
-                })}
-                placeholder="Student Roll Number"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-              />
-              {errors.studentRollNumber && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.studentRollNumber.message}
-                </p>
-              )}
-            </div>
-            <div>
-              <select
-                {...register("studentClass", {
-                  required: "Student Class is required",
-                })}
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-              >
-                <option value="">Select Class</option>
-                {[...Array(10)].map((_, index) => (
-                  <option key={index + 1} value={index + 1}>
-                    Class {index + 1}
-                  </option>
-                ))}
-                <option value="ssc">SSC</option>
-                <option value="hsc">HSC</option>
-              </select>
-              {errors.studentClass && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.studentClass.message}
-                </p>
-              )}
-            </div>
-
-            <div>
-              <input
-                type="text"
-                {...register("phoneNumber", {
-                  required: "Phone Number is required",
-                })}
-                placeholder="Phone Number"
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
-              />
-              {errors.phoneNumber && (
-                <p className="text-red-500 text-sm mt-1">
-                  {errors.phoneNumber.message}
-                </p>
-              )}
-            </div>
-          </>
-        )}
-
-        <button
-          type="submit"
-          className="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700 transition duration-200 font-semibold"
-        >
-          Sign Up
-        </button>
-      </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
-export default Signup;
+export default AllUsers;

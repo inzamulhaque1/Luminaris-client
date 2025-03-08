@@ -33,6 +33,10 @@ import AllUsers from "../pages/Dashboard/Admin/AllUsers";
       element: <Dashboard></Dashboard>,
       children: [
         {
+          path: '/dashboard',
+          element: <MyProfile></MyProfile>
+        },
+        {
           path: 'profile',
           element: <MyProfile></MyProfile>
         },
