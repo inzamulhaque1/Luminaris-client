@@ -1,7 +1,16 @@
 /* eslint-disable no-unused-vars */
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../../hooks/useAuth";
-import { FaUser, FaEnvelope, FaBirthdayCake, FaPhone, FaMapMarkerAlt, FaGraduationCap, FaBook, FaIdCard } from "react-icons/fa";
+import {
+  FaUser,
+  FaEnvelope,
+  FaBirthdayCake,
+  FaPhone,
+  FaMapMarkerAlt,
+  FaGraduationCap,
+  FaBook,
+  FaIdCard,
+} from "react-icons/fa";
 import Snowfall from "react-snowfall"; // For snowfall effect
 import { motion } from "framer-motion"; // For animations
 
@@ -13,38 +22,79 @@ const MyProfile = () => {
   useEffect(() => {
     const colors = [];
     const colorOptions = [
-      "#ff5252", "#ff9800", "#ffeb3b", "#4caf50", "#2196f3", 
-      "#9c27b0", "#e91e63", "#00bcd4", "#673ab7", "#3f51b5", 
-      "#ffffff", "#f44336", "#ff5722", "#ffc107", "#8bc34a", 
-      "#03a9f4", "#607d8b", "#795548", "#9e9e9e", "#cddc39", 
-      "#009688", "#ff4081", "#7c4dff", "#00e676", "#ff6e40", 
-      "#18ffff", "#ffd740", "#69f0ae", "#b388ff", "#ff8a80", 
-      "#64ffda", "#ff80ab", "#a7ffeb", "#b9f6ca", "#ffe57f", 
-      "#ff9e80", "#80d8ff", "#ea80fc", "#d500f9", "#00b0ff", 
-      "#76ff03", "#ff1744", "#f50057", "#651fff", "#3d5afe", 
-      "#00e5ff", "#1de9b6", "#ff3d00", "#c6ff00", "#ff9100", 
-      "#d50000"
+      "#ff5252",
+      "#ff9800",
+      "#ffeb3b",
+      "#4caf50",
+      "#2196f3",
+      "#9c27b0",
+      "#e91e63",
+      "#00bcd4",
+      "#673ab7",
+      "#3f51b5",
+      "#ffffff",
+      "#f44336",
+      "#ff5722",
+      "#ffc107",
+      "#8bc34a",
+      "#03a9f4",
+      "#607d8b",
+      "#795548",
+      "#9e9e9e",
+      "#cddc39",
+      "#009688",
+      "#ff4081",
+      "#7c4dff",
+      "#00e676",
+      "#ff6e40",
+      "#18ffff",
+      "#ffd740",
+      "#69f0ae",
+      "#b388ff",
+      "#ff8a80",
+      "#64ffda",
+      "#ff80ab",
+      "#a7ffeb",
+      "#b9f6ca",
+      "#ffe57f",
+      "#ff9e80",
+      "#80d8ff",
+      "#ea80fc",
+      "#d500f9",
+      "#00b0ff",
+      "#76ff03",
+      "#ff1744",
+      "#f50057",
+      "#651fff",
+      "#3d5afe",
+      "#00e5ff",
+      "#1de9b6",
+      "#ff3d00",
+      "#c6ff00",
+      "#ff9100",
+      "#d50000",
     ];
-    
+
     // Create array of 10 images with random colors
     for (let i = 0; i < 10; i++) {
-      const color = colorOptions[Math.floor(Math.random() * colorOptions.length)];
+      const color =
+        colorOptions[Math.floor(Math.random() * colorOptions.length)];
       const snowflake = new Image();
-      const canvas = document.createElement('canvas');
+      const canvas = document.createElement("canvas");
       canvas.width = 10;
       canvas.height = 10;
-      const ctx = canvas.getContext('2d');
-      
+      const ctx = canvas.getContext("2d");
+
       // Draw a colored circle
       ctx.beginPath();
       ctx.arc(5, 5, 5, 0, Math.PI * 2);
       ctx.fillStyle = color;
       ctx.fill();
-      
+
       snowflake.src = canvas.toDataURL();
       colors.push(snowflake);
     }
-    
+
     setSnowColors(colors);
   }, []);
 
@@ -64,26 +114,66 @@ const MyProfile = () => {
   // Role-specific fields configuration
   const roleFields = {
     student: [
-      { label: "Roll Number", value: user.rollNumber, icon: <FaIdCard className="text-blue-500" /> },
-      { label: "Class", value: user.class, icon: <FaBook className="text-blue-500" /> },
+      {
+        label: "Roll Number",
+        value: user.rollNumber,
+        icon: <FaIdCard className="text-blue-500" />,
+      },
+      {
+        label: "Class",
+        value: user.class,
+        icon: <FaBook className="text-blue-500" />,
+      },
     ],
     teacher: [
-      { label: "Subject", value: user.subject, icon: <FaBook className="text-blue-500" /> },
-      { label: "Education Qualification", value: user.educationQualification, icon: <FaGraduationCap className="text-blue-500" /> },
+      {
+        label: "Subject",
+        value: user.subject,
+        icon: <FaBook className="text-blue-500" />,
+      },
+      {
+        label: "Education Qualification",
+        value: user.educationQualification,
+        icon: <FaGraduationCap className="text-blue-500" />,
+      },
     ],
     parent: [
-      { label: "Student Roll Number", value: user.studentRollNumber, icon: <FaIdCard className="text-blue-500" /> },
-      { label: "Student Class", value: user.studentClass, icon: <FaBook className="text-blue-500" /> },
+      {
+        label: "Student Roll Number",
+        value: user.studentRollNumber,
+        icon: <FaIdCard className="text-blue-500" />,
+      },
+      {
+        label: "Student Class",
+        value: user.studentClass,
+        icon: <FaBook className="text-blue-500" />,
+      },
     ],
     admin: [],
   };
 
   // Common fields for all roles
   const commonFields = [
-    { label: "Email", value: user.email, icon: <FaEnvelope className="text-blue-500" /> },
-    { label: "Date of Birth", value: user.dateOfBirth, icon: <FaBirthdayCake className="text-blue-500" /> },
-    { label: "Phone Number", value: user.phoneNumber, icon: <FaPhone className="text-blue-500" /> },
-    { label: "Address", value: user.address, icon: <FaMapMarkerAlt className="text-blue-500" /> },
+    {
+      label: "Email",
+      value: user.email,
+      icon: <FaEnvelope className="text-blue-500" />,
+    },
+    {
+      label: "Date of Birth",
+      value: user.dateOfBirth,
+      icon: <FaBirthdayCake className="text-blue-500" />,
+    },
+    {
+      label: "Phone Number",
+      value: user.phoneNumber,
+      icon: <FaPhone className="text-blue-500" />,
+    },
+    {
+      label: "Address",
+      value: user.address,
+      icon: <FaMapMarkerAlt className="text-blue-500" />,
+    },
   ];
 
   // Combine common fields with role-specific fields
@@ -117,17 +207,38 @@ const MyProfile = () => {
             animate={{ y: 0 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
           >
-            <motion.img
-              src={user.image || "https://via.placeholder.com/150"}
-              alt="User Profile"
-              className="w-40 h-40 rounded-full mx-auto mb-6 border-4 border-blue-300 object-cover shadow-lg"
-              whileHover={{ scale: 1.1, rotate: 5 }}
-              transition={{ type: "spring", stiffness: 300 }}
-            />
+            {/* Container for the image and rotating border */}
+            <div className="relative w-40 h-40 rounded-full mx-auto mb-6">
+              {/* Rotating border */}
+              <div
+                className="absolute inset-0 rounded-full border-4 border-transparent"
+                style={{
+                  background:
+                    "conic-gradient(from 0deg, #ff7f7f, #7fff7f, #7f7fff, #333333, #ff7f7f)", // Softer colors
+                  mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  WebkitMask:
+                    "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
+                  maskComposite: "exclude",
+                  WebkitMaskComposite: "xor",
+                  animation: "rotateBorder 2s linear infinite",
+                  filter: "blur(2px)", // Soften the edges
+                }}
+              ></div>
+
+              {/* Image */}
+              <motion.img
+                src={user.image || "https://via.placeholder.com/150"}
+                alt="User Profile"
+                className="w-full h-full rounded-full object-cover shadow-lg"
+                whileHover={{ scale: 1.1, rotate: 5 }}
+                transition={{ type: "spring", stiffness: 300 }}
+              />
+            </div>
+
             {/* Glowing effect behind image */}
-            <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-pink-400 to-blue-500 opacity-30 blur-lg -z-10"></div>
+            <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-pink-400 to-black opacity-30 blur-lg -z-10"></div>
           </motion.div>
-          
+
           <motion.h2
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -136,7 +247,7 @@ const MyProfile = () => {
           >
             {user.name}
           </motion.h2>
-          
+
           <motion.p
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -168,8 +279,15 @@ const MyProfile = () => {
               className="flex items-center bg-gradient-to-r from-gray-50 to-white p-5 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
               initial={{ opacity: 0, x: -30 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1, duration: 0.6, ease: "easeOut" }}
-              whileHover={{ scale: 1.02, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
+              transition={{
+                delay: index * 0.1,
+                duration: 0.6,
+                ease: "easeOut",
+              }}
+              whileHover={{
+                scale: 1.02,
+                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
+              }}
             >
               <div className="flex items-center w-1/3 text-lg font-semibold text-gray-700">
                 <motion.span
@@ -187,7 +305,7 @@ const MyProfile = () => {
             </motion.div>
           ))}
         </div>
-        
+
         {/* Footer with animation */}
         <motion.div
           className="mt-10 text-center text-sm text-gray-500"

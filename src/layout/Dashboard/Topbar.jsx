@@ -14,7 +14,7 @@ const Topbar = () => {
           <div className="flex items-center space-x-4">
             <span className="text-gray-700">🔔</span>
             <img
-              src={user.image}
+              src={user?.image}
               alt="User"
               className="w-8 h-8 rounded-full"
             />

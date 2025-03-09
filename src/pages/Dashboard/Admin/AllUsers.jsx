@@ -122,7 +122,7 @@ const AllUsers = () => {
   }
 
   return (
-    <div className="container mx-auto p-6 bg-gray-50 min-h-screen">
+    <div className="p-20  ">
       <h2 className="text-4xl font-extrabold mb-8 text-center text-gray-800 flex items-center justify-center">
         <FaCrown className="mr-3 text-yellow-500" /> All Users
       </h2>

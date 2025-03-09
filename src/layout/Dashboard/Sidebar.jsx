@@ -78,7 +78,7 @@ const Sidebar = () => {
 
   return (
     <aside className="w-64 bg-blue-600 text-white p-6 flex flex-col h-screen">
-      <h1 className="text-2xl font-bold mb-8">ALEX</h1>
+      <h1 className="text-2xl font-bold mb-8">Luminaris</h1>
       <nav className="space-y-4 flex-1">
         {navLinks.map((link) => (
           <NavLink
