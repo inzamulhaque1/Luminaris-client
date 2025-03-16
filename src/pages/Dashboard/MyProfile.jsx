@@ -208,7 +208,7 @@ const MyProfile = () => {
             transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
           >
             {/* Container for the image and rotating border */}
-            <div className="relative w-40 h-40 rounded-full mx-auto mb-6">
+            <div className="relative w-40 h-40 rounded-full mx-auto mb-5">
               {/* Rotating border */}
               <div
                 className="absolute inset-0 rounded-full border-4 border-transparent"
