@@ -1,9 +1,10 @@
+import AllTeacher from "./AllTeacher";
 
 
 const Home = () => {
     return (
         <div>
-            Home
+            <AllTeacher></AllTeacher>
         </div>
     );
 };
