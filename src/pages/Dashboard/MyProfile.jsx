@@ -10,13 +10,41 @@ import {
   FaGraduationCap,
   FaBook,
   FaIdCard,
+  FaUserGraduate,
+  FaUserFriends,
+  FaShieldAlt,
 } from "react-icons/fa";
-import Snowfall from "react-snowfall"; // For snowfall effect
-import { motion } from "framer-motion"; // For animations
+import { GiTeacher } from "react-icons/gi";
+import Snowfall from "react-snowfall";
+import { motion } from "framer-motion";
 
 const MyProfile = () => {
   const { user } = useAuth();
   const [snowColors, setSnowColors] = useState([]);
+
+  // Role icons mapping
+  const roleIcons = {
+    student: <FaUserGraduate className="text-yellow-500" />,
+    teacher: <GiTeacher className="text-blue-500" />,
+    parent: <FaUserFriends className="text-purple-500" />,
+    admin: <FaShieldAlt className="text-green-500" />,
+  };
+
+  // Role colors mapping
+  const roleColors = {
+    student: "from-yellow-100 to-yellow-50",
+    teacher: "from-blue-100 to-blue-50",
+    parent: "from-purple-100 to-purple-50",
+    admin: "from-green-100 to-green-50",
+  };
+
+  // Role badge colors
+  const roleBadgeColors = {
+    student: "bg-yellow-100 text-yellow-800",
+    teacher: "bg-blue-100 text-blue-800",
+    parent: "bg-purple-100 text-purple-800",
+    admin: "bg-green-100 text-green-800",
+  };
 
   // Generate random colors for snowflakes
   useEffect(() => {
@@ -33,49 +61,8 @@ const MyProfile = () => {
       "#673ab7",
       "#3f51b5",
       "#ffffff",
-      "#f44336",
-      "#ff5722",
-      "#ffc107",
-      "#8bc34a",
-      "#03a9f4",
-      "#607d8b",
-      "#795548",
-      "#9e9e9e",
-      "#cddc39",
-      "#009688",
-      "#ff4081",
-      "#7c4dff",
-      "#00e676",
-      "#ff6e40",
-      "#18ffff",
-      "#ffd740",
-      "#69f0ae",
-      "#b388ff",
-      "#ff8a80",
-      "#64ffda",
-      "#ff80ab",
-      "#a7ffeb",
-      "#b9f6ca",
-      "#ffe57f",
-      "#ff9e80",
-      "#80d8ff",
-      "#ea80fc",
-      "#d500f9",
-      "#00b0ff",
-      "#76ff03",
-      "#ff1744",
-      "#f50057",
-      "#651fff",
-      "#3d5afe",
-      "#00e5ff",
-      "#1de9b6",
-      "#ff3d00",
-      "#c6ff00",
-      "#ff9100",
-      "#d50000",
     ];
 
-    // Create array of 10 images with random colors
     for (let i = 0; i < 10; i++) {
       const color =
         colorOptions[Math.floor(Math.random() * colorOptions.length)];
@@ -101,12 +88,12 @@ const MyProfile = () => {
   if (!user) {
     return (
       <motion.div
-        className="flex justify-center items-center bg-gradient-to-b from-blue-200 to-purple-200"
+        className="flex justify-center items-center bg-gradient-to-br from-blue-50 to-purple-50"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1 }}
       >
-        <div className="text-gray-600 text-xl font-semibold">Loading...</div>
+        <div className="text-gray-600 text-xl font-semibold">Loading profile...</div>
       </motion.div>
     );
   }
@@ -117,39 +104,52 @@ const MyProfile = () => {
       {
         label: "Roll Number",
         value: user.rollNumber,
-        icon: <FaIdCard className="text-blue-500" />,
+        icon: <FaIdCard className="text-yellow-600" />,
+        group: "Academic",
       },
       {
         label: "Class",
         value: user.class,
-        icon: <FaBook className="text-blue-500" />,
+        icon: <FaBook className="text-yellow-600" />,
+        group: "Academic",
       },
     ],
     teacher: [
       {
         label: "Subject",
         value: user.subject,
-        icon: <FaBook className="text-blue-500" />,
+        icon: <FaBook className="text-blue-600" />,
+        group: "Professional",
       },
       {
-        label: "Education Qualification",
+        label: "Education",
         value: user.educationQualification,
-        icon: <FaGraduationCap className="text-blue-500" />,
+        icon: <FaGraduationCap className="text-blue-600" />,
+        group: "Professional",
       },
     ],
     parent: [
       {
-        label: "Student Roll Number",
+        label: "Student Roll",
         value: user.studentRollNumber,
-        icon: <FaIdCard className="text-blue-500" />,
+        icon: <FaIdCard className="text-purple-600" />,
+        group: "Student Info",
       },
       {
         label: "Student Class",
         value: user.studentClass,
-        icon: <FaBook className="text-blue-500" />,
+        icon: <FaBook className="text-purple-600" />,
+        group: "Student Info",
       },
     ],
-    admin: [],
+    admin: [
+      {
+        label: "Admin Since",
+        value: new Date(user.createdAt).toLocaleDateString(),
+        icon: <FaShieldAlt className="text-green-600" />,
+        group: "Administrative",
+      },
+    ],
   };
 
   // Common fields for all roles
@@ -157,165 +157,203 @@ const MyProfile = () => {
     {
       label: "Email",
       value: user.email,
-      icon: <FaEnvelope className="text-blue-500" />,
+      icon: <FaEnvelope className="text-indigo-600" />,
+      group: "Personal",
     },
     {
       label: "Date of Birth",
       value: user.dateOfBirth,
-      icon: <FaBirthdayCake className="text-blue-500" />,
+      icon: <FaBirthdayCake className="text-indigo-600" />,
+      group: "Personal",
     },
     {
-      label: "Phone Number",
+      label: "Phone",
       value: user.phoneNumber,
-      icon: <FaPhone className="text-blue-500" />,
+      icon: <FaPhone className="text-indigo-600" />,
+      group: "Contact",
     },
     {
       label: "Address",
       value: user.address,
-      icon: <FaMapMarkerAlt className="text-blue-500" />,
+      icon: <FaMapMarkerAlt className="text-indigo-600" />,
+      group: "Contact",
     },
   ];
 
-  // Combine common fields with role-specific fields
-  const displayFields = [...commonFields, ...(roleFields[user.role] || [])];
+  // Combine and group fields
+  const allFields = [...commonFields, ...(roleFields[user.role] || [])];
+  const fieldGroups = {};
+
+  allFields.forEach((field) => {
+    if (!fieldGroups[field.group]) {
+      fieldGroups[field.group] = [];
+    }
+    fieldGroups[field.group].push(field);
+  });
+
+  // Safely get the last 6 characters of user ID
+  const userIdSuffix = user?._id ? user._id.slice(-6) : 'N/A';
+
+
 
   return (
-    <div className="relative bg-gradient-to-br from-blue-50 via-purple-50 to-pink-50 overflow-hidden">
-      {/* Custom Snowfall Effect with Random Colors */}
+    <div className={`relative  overflow-hidden bg-gradient-to-br ${roleColors[user.role]}`}>
+      {/* Custom Snowfall Effect */}
       {snowColors.length > 0 && (
         <Snowfall
-          snowflakeCount={200}
+          snowflakeCount={150}
           images={snowColors}
-          speed={[1, 5]}
-          wind={[-1, 10]}
-          radius={[1, 5]}
-          style={{ position: "fixed", zIndex: 20 }}
+          speed={[1, 3]}
+          wind={[-0.5, 2]}
+          radius={[1, 4]}
+          style={{ position: "fixed", zIndex: 10 }}
         />
       )}
 
-      {/* Profile Card */}
-      <motion.div
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
-        className="max-w-2xl mx-auto bg-white bg-opacity-95 shadow-2xl rounded-2xl my-5 relative z-10 border border-gray-100 p-8"
-      >
-        <div className="text-center">
-          <motion.div
-            className="relative inline-block"
-            initial={{ y: -20 }}
-            animate={{ y: 0 }}
-            transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
-          >
-            {/* Container for the image and rotating border */}
-            <div className="relative w-40 h-40 rounded-full mx-auto mb-5">
-              {/* Rotating border */}
-              <div
-                className="absolute inset-0 rounded-full border-4 border-transparent"
-                style={{
-                  background:
-                    "conic-gradient(from 0deg, #ff7f7f, #7fff7f, #7f7fff, #333333, #ff7f7f)", // Softer colors
-                  mask: "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  WebkitMask:
-                    "linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)",
-                  maskComposite: "exclude",
-                  WebkitMaskComposite: "xor",
-                  animation: "rotateBorder 2s linear infinite",
-                  filter: "blur(2px)", // Soften the edges
-                }}
-              ></div>
-
-              {/* Image */}
-              <motion.img
-                src={user.image || "https://via.placeholder.com/150"}
-                alt="User Profile"
-                className="w-full h-full rounded-full object-cover shadow-lg"
-                whileHover={{ scale: 1.1, rotate: 5 }}
-                transition={{ type: "spring", stiffness: 300 }}
-              />
-            </div>
-
-            {/* Glowing effect behind image */}
-            <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-pink-400 to-black opacity-30 blur-lg -z-10"></div>
-          </motion.div>
-
-          <motion.h2
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="text-4xl font-extrabold  bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600"
-          >
-            {user.name}
-          </motion.h2>
-
-          <motion.p
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.5 }}
-            className={`inline-flex items-center px-4 py-1.5 mt-3 rounded-full text-sm font-semibold shadow-md ${
-              user.role === "admin"
-                ? "bg-gradient-to-r from-green-300 to-green-400 text-green-900"
-                : user.role === "teacher"
-                ? "bg-gradient-to-r from-blue-300 to-blue-400 text-blue-900"
-                : user.role === "student"
-                ? "bg-gradient-to-r from-yellow-300 to-yellow-400 text-yellow-900"
-                : "bg-gradient-to-r from-purple-300 to-purple-400 text-purple-900"
-            }`}
-          >
-            <motion.span
-              whileHover={{ scale: 1.2, rotate: 360 }}
-              transition={{ type: "spring", stiffness: 400 }}
-            >
-              <FaUser className="mr-2" />
-            </motion.span>
-            {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-          </motion.p>
-        </div>
-
-        <div className="mt-10 space-y-6">
-          {displayFields.map((field, index) => (
-            <motion.div
-              key={index}
-              className="flex items-center bg-gradient-to-r from-gray-50 to-white p-5 rounded-xl shadow-sm hover:shadow-md transition-all duration-300"
-              initial={{ opacity: 0, x: -30 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{
-                delay: index * 0.1,
-                duration: 0.6,
-                ease: "easeOut",
-              }}
-              whileHover={{
-                scale: 1.02,
-                boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <div className="flex items-center w-1/3 text-lg font-semibold text-gray-700">
-                <motion.span
-                  whileHover={{ rotate: 360, scale: 1.2 }}
-                  transition={{ duration: 0.5 }}
-                  className="text-xl"
-                >
-                  {field.icon}
-                </motion.span>
-                <span className="ml-3">{field.label}:</span>
-              </div>
-              <p className="w-2/3 text-gray-600 break-words font-medium">
-                {field.value || "Not provided"}
-              </p>
-            </motion.div>
-          ))}
-        </div>
-
-        {/* Footer with animation */}
+      {/* Profile Container */}
+      <div className="container mx-auto px-4 py-12 relative z-20">
         <motion.div
-          className="mt-10 text-center text-sm text-gray-500"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1 }}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="max-w-4xl mx-auto"
         >
-          <p>Profile last updated: {new Date().toLocaleDateString()}</p>
+          {/* Profile Header */}
+          <div className="flex flex-col md:flex-row gap-8 mb-12">
+            {/* Profile Image */}
+            <motion.div
+              className="flex-shrink-0 relative self-start"
+              initial={{ scale: 0.9 }}
+              animate={{ scale: 1 }}
+              transition={{ delay: 0.2, type: "spring" }}
+            >
+              <div className="relative w-48 h-48 rounded-2xl overflow-hidden shadow-xl border-4 border-white">
+                <img
+                  src={user.image || "https://via.placeholder.com/150"}
+                  alt="Profile"
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent opacity-0 hover:opacity-100 transition-opacity duration-300 flex items-end p-4">
+                  <span className="text-white font-medium">View Full Image</span>
+                </div>
+              </div>
+              <div className="absolute -z-10 -inset-2 bg-gradient-to-r from-blue-400 to-purple-500 rounded-2xl blur-md opacity-75"></div>
+            </motion.div>
+
+            {/* Profile Info */}
+            <div className="flex-1">
+              <motion.div
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3, duration: 0.6 }}
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <h1 className="text-3xl md:text-4xl font-bold text-gray-800">
+                    {user.name}
+                  </h1>
+                  <span className={`px-3 py-1 rounded-full text-sm font-semibold ${roleBadgeColors[user.role]}`}>
+                    {roleIcons[user.role]}
+                    <span className="ml-2">
+                      {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                    </span>
+                  </span>
+                </div>
+
+                <p>Profile last updated: {new Date().toLocaleDateString()} at {new Date().toLocaleTimeString()}</p> <br />
+                
+
+                {/* Quick Stats */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                  <motion.div 
+                    className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-100"
+                    whileHover={{ y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
+                  >
+                    <div className="text-indigo-500 mb-1">
+                      <FaEnvelope />
+                    </div>
+                    <div className="text-xs text-gray-500">Email Verified</div>
+                    <div className="font-semibold">Yes</div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-100"
+                    whileHover={{ y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
+                  >
+                    <div className="text-indigo-500 mb-1">
+                      <FaUser />
+                    </div>
+                    <div className="text-xs text-gray-500">Account Status</div>
+                    <div className="font-semibold">Active</div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-100"
+                    whileHover={{ y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
+                  >
+                    <div className="text-indigo-500 mb-1">
+                      <FaIdCard />
+                    </div>
+                    <div className="text-xs text-gray-500">User ID</div>
+                    <div className="font-semibold truncate">{user.id}</div>
+                  </motion.div>
+
+                  <motion.div 
+                    className="bg-white/80 backdrop-blur-sm p-4 rounded-xl shadow-sm border border-gray-100"
+                    whileHover={{ y: -5, boxShadow: "0 10px 15px -3px rgba(0, 0, 0, 0.1)" }}
+                  >
+                    <div className="text-indigo-500 mb-1">
+                      <FaMapMarkerAlt />
+                    </div>
+                    <div className="text-xs text-gray-500">Location</div>
+                    <div className="font-semibold truncate">
+                      {user.address ? (user.address.split(',')[0] || 'Not set') : 'Not set'}
+                    </div>
+                  </motion.div>
+                </div>
+              </motion.div>
+            </div>
+          </div>
+
+          {/* Profile Details */}
+          <div className="space-y-8">
+            {Object.entries(fieldGroups).map(([groupName, fields], groupIndex) => (
+              <motion.div
+                key={groupIndex}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.4 + groupIndex * 0.1 }}
+              >
+                <h2 className="text-xl font-semibold text-gray-700 mb-4 flex items-center">
+                  <span className="w-1 h-6 bg-indigo-500 mr-3 rounded-full"></span>
+                  {groupName} Information
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {fields.map((field, fieldIndex) => (
+                    <motion.div
+                      key={fieldIndex}
+                      className="bg-white/90 backdrop-blur-sm p-5 rounded-xl shadow-sm hover:shadow-md transition-all duration-300 border border-gray-100"
+                      whileHover={{ scale: 1.02 }}
+                    >
+                      <div className="flex items-start">
+                        <div className="p-2 rounded-lg bg-indigo-50 mr-4">
+                          {field.icon}
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-medium text-gray-500">{field.label}</h3>
+                          <p className="text-gray-800 font-medium mt-1 break-words">
+                            {field.value || <span className="text-gray-400">Not provided</span>}
+                          </p>
+                        </div>
+                      </div>
+                    </motion.div>
+                  ))}
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
         </motion.div>
-      </motion.div>
+      </div>
     </div>
   );
 };
