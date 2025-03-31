@@ -81,8 +81,6 @@ const AllTeacher = () => {
   {/* Teacher Cards Grid */}
   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
     {/* Teacher cards go here */}
-
-
         {teachers.map(teacher => (
           <div
             key={teacher._id}
