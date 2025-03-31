@@ -68,7 +68,7 @@ const Navbar = () => {
   }
 
   return (
-    <nav className={`bg-primary w-full fixed top-0 z-50 transition-all duration-300 ${scrolled ? "shadow-lg" : ""}`}>
+    <nav className={`bg-primary w-full sticky top-0 z-50 transition-all duration-300 ${scrolled ? "shadow-lg" : ""}`}>
       <div className="w-11/12 md:w-10/12 mx-auto">
         <div className="flex justify-between items-center p-4">
           {/* Logo */}
