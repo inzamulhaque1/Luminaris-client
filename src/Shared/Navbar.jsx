@@ -57,7 +57,7 @@ const Navbar = () => {
 
   const links = [
     { to: "/", label: "Home" },
-
+    { to: "/", label: "Home" },
     { to: "/dashboard", label: "Dashboard" },
   ];
   
