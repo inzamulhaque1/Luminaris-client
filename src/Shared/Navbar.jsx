@@ -59,6 +59,8 @@ const Navbar = () => {
     { to: "/", label: "Home" },
     
     { to: "/dashboard", label: "Dashboard" },
+    { to: "/dashboard", label: "Dashboard" },
+    { to: "/dashboard", label: "Dashboard" },
  
   ];
   
