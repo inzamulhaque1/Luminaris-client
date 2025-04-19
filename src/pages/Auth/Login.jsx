@@ -66,7 +66,7 @@ const Login = () => {
             <div className="text-center mb-8">
               <div className="flex items-center justify-center mb-2">
                 <Sparkles size={28} className="text-blue-600" />
-                <h1 className="text-2xl font-bold ml-2 text-gray-800">EduConnect</h1>
+                <h1 className="text-2xl font-bold ml-2 text-gray-800">Luminaries</h1>
               </div>
               <h2 className="text-2xl font-bold text-gray-800">Welcome Back</h2>
               <p className="text-gray-600 mt-1">Sign in to access your account</p>
@@ -131,7 +131,7 @@ const Login = () => {
                     onClick={togglePasswordVisibility}
                     className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500 hover:text-gray-700"
                   >
-                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {showPassword ? <EyeOff className="text-red-600" size={18} /> : <Eye className="text-green-600" size={18} />}
                   </button>
                 </div>
                 {errors.password && (
@@ -161,7 +161,7 @@ const Login = () => {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 text-white py-3 rounded-lg hover:from-blue-700 hover:to-indigo-700 transition-all font-medium flex items-center justify-center"
+                className="w-full bg-gradient-to-r from-red-600 to-red-600 text-white py-3 rounded-lg hover:from-pink-500 hover:to-pink-500 transition-all font-medium flex items-center justify-center"
               >
                 {isLoading ? (
                   <>
