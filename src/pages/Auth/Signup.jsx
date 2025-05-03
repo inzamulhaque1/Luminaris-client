@@ -208,7 +208,7 @@ const Signup = () => {
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-medium mb-1">Select Account Type</label>
+                  <label className="block text-gray-600 font-medium mb-1">Select Account Type</label>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
                     {['student', 'teacher', 'parent', 'admin'].map((role) => (
                       <div
