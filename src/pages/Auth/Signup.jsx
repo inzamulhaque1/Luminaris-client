@@ -202,7 +202,7 @@ const Signup = () => {
                     name="password"
                     value={formData.password}
                     onChange={handleChange}
-                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all"
+                    className="w-full p-3 border border-gray-200 rounded-lg focus:ring-4 focus:ring-blue-500 focus:border-blue-500 transition-all"
                     placeholder="Create a password"
                     required
                   />
