@@ -218,7 +218,7 @@ const Signup = () => {
                           formData.role === role ? 'border-blue-500 bg-blue-50 ring-2 ring-blue-500' : 'border-gray-300 hover:border-blue-300'
                         } rounded-lg cursor-pointer transition-all`}
                       >
-                        <div className={`p-2 rounded-full ${formData.role === role ? 'bg-blue-100' : 'bg-gray-200'} mr-3`}>
+                        <div className={`p-2 rounded-full ${formData.role === role ? 'bg-blue-200' : 'bg-gray-200'} mr-3`}>
                           {getRoleIcon(role)}
                         </div>
                         <span className="capitalize font-medium">{role}</span>
