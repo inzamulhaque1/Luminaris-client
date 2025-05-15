@@ -19,6 +19,10 @@ import AllUsers from "../pages/Dashboard/Admin/AllUsers";
             element: <Home></Home>,
         },
         {
+            path: "/",
+            element: <Home></Home>,
+        },
+        {
             path: "/signup",
             element: <Signup></Signup>,
         },
