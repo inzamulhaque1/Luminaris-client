@@ -26,10 +26,6 @@ import AllUsers from "../pages/Dashboard/Admin/AllUsers";
             path: "/login",
             element: <Login></Login>,
         }
-        {
-            path: "/login",
-            element: <Login></Login>,
-        }
       ]
     },
     {
