@@ -43,6 +43,10 @@ import AllUsers from "../pages/Dashboard/Admin/AllUsers";
         {
           path: 'all-users',
           element: <AllUsers></AllUsers>
+        },
+        {
+          path: 'all-users',
+          element: <AllUsers></AllUsers>
         }
       ]
     }
