@@ -48,10 +48,7 @@ import AllUsers from "../pages/Dashboard/Admin/AllUsers";
           path: 'profile',
           element: <MyProfile></MyProfile>
         },
-        {
-          path: 'all-users',
-          element: <AllUsers></AllUsers>
-        },
+
         
       ]
     }
